@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>내 웹앱 게시판 · 앱 모음</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --badge-bg: #f1f5f9;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .wrap {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      padding: 36px 0 28px;
+    }
+
+    .header-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-soft);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    .search-box {
+      width: 100%;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 15px;
+      font-family: inherit;
+      background: var(--bg);
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .search-input:focus {
+      background: var(--surface);
+      border-color: var(--primary);
+    }
+
+    main {
+      flex: 1;
+      padding: 32px 0 48px;
+    }
+
+    .board-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .board-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .board-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .board-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: 0 10px 24px -12px rgba(15, 23, 42, 0.16);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .category-badge {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink);
+      background: var(--badge-bg);
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    .post-no {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 18px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .empty-state {
+      display: none;
+      text-align: center;
+      padding: 48px 20px;
+      background: var(--surface);
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--line);
+      padding: 20px 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="header-top">
+        <div>
+          <span class="tag">WEB APP BOARD</span>
+          <h1>내 웹앱 게시판</h1>
+          <p class="subtitle">만든 웹앱과 도구를 한곳에 모아둔 대문 페이지입니다.</p>
+        </div>
+      </div>
+      <div class="search-box">
+        <input
+          type="search"
+          id="search-input"
+          class="search-input"
+          placeholder="앱 이름이나 설명으로 검색해 보세요..."
+          oninput="renderBoard()"
+        />
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <div class="board-meta">
+        <span>등록된 앱 목록</span>
+        <span id="item-count">총 0개</span>
+      </div>
+
+      <div id="board-list" class="board-list"></div>
+      <div id="empty-state" class="empty-state">검색 조건에 맞는 앱이 없습니다.</div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>GitHub Pages · 웹앱 모음 게시판</span>
+      <span>새 항목은 코드 내 APPS 목록에 추가</span>
+    </div>
+  </footer>
+
+  <script>
+    // 이곳에 앱 정보를 추가하면 게시판 카드가 자동으로 생성됩니다.
+    const APPS = [
+      {
+        category: '유틸리티',
+        title: 'QR 코드 생성기 & 리더기',
+        description: '링크 입력 시 QR 코드를 즉시 생성하고, 이미지를 업로드해 링크를 추출하는 웹앱입니다.',
+        url: './QR/',
+        date: '최신 등록'
+      },
+      {
+        category: '샘플 · 예정',
+        title: '다음 웹앱 (타이머 / 뽑기 등)',
+        description: '추가로 만들 웹앱 폴더나 파일 경로를 url 항목에 연결해 게시판에 올릴 수 있습니다.',
+        url: './gemini-code-1795744020769.html',
+        date: '예시 항목'
+      }
+    ];
+
+    function renderBoard() {
+      const keyword = document.getElementById('search-input').value.trim().toLowerCase();
+      const listEl = document.getElementById('board-list');
+      const emptyEl = document.getElementById('empty-state');
+      const countEl = document.getElementById('item-count');
+
+      const filtered = APPS.filter((app) => {
+        const target = `${app.title} ${app.description} ${app.category}`.toLowerCase();
+        return target.includes(keyword);
+      });
+
+      countEl.textContent = `총 ${filtered.length}개`;
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = '';
+        emptyEl.style.display = 'block';
+        return;
+      }
+
+      emptyEl.style.display = 'none';
+      listEl.innerHTML = filtered
+        .map((app, idx) => {
+          const postNo = String(filtered.length - idx).padStart(2, '0');
+          return `
+            <a class="board-card" href="${app.url}">
+              <div>
+                <div class="card-top">
+                  <span class="category-badge">${app.category}</span>
+                  <span class="post-no">No. ${postNo}</span>
+                </div>
+                <h2 class="card-title">${app.title}</h2>
+                <p class="card-desc">${app.description}</p>
+              </div>
+              <div class="card-footer">
+                <span>${app.date || '바로가기'}</span>
+                <span>열기 →</span>
+              </div>
+            </a>
+          `;
+        })
+        .join('');
+    }
+
+    renderBoard();
+  </script>
+</body>
+</html>ㅑㅜ
