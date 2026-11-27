@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>랜덤 뽑기 &amp; 팀 나누기</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+  <title>내 웹앱 게시판 · 통합 도구 모음</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <style>
     :root {
-      --bg: #f6f8fc;
+      --bg: #f8fafc;
       --surface: #ffffff;
       --surface-alt: #f1f5f9;
       --ink: #0f172a;
@@ -21,42 +21,45 @@
       --accent: #e0115f;
       --accent-soft: #fde7ef;
       --success: #059669;
+      --danger: #dc2626;
+      --badge-bg: #f1f5f9;
       --radius: 16px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg);
       color: var(--ink);
-      line-height: 1.55;
+      line-height: 1.5;
       min-height: 100vh;
-      padding: 28px 16px 60px;
+      display: flex;
+      flex-direction: column;
     }
 
-    .app {
-      max-width: 980px;
-      margin: 0 auto;
-    }
+    .wrap { max-width: 980px; width: 100%; margin: 0 auto; padding: 0 20px; }
 
     header {
       background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 6px 20px -12px rgba(15, 23, 42, 0.12);
+      border-bottom: 1px solid var(--line);
+      padding: 28px 0 24px;
     }
 
-    .badge {
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand-info { flex: 1; min-width: 0; }
+
+    .tag {
       display: inline-block;
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 700;
       color: var(--primary);
       background: var(--primary-soft);
       padding: 4px 10px;
@@ -64,120 +67,160 @@
       margin-bottom: 8px;
     }
 
-    h1 {
-      font-size: 26px;
-      font-weight: 900;
-      letter-spacing: -0.4px;
-      margin-bottom: 6px;
+    h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
+    .subtitle { font-size: 14px; color: var(--muted); }
+
+    .avatar-box { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+
+    .avatar-square {
+      width: 68px;
+      height: 68px;
+      border-radius: 14px;
+      border: 2px solid var(--line);
+      background: var(--primary-soft);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px -4px rgba(15, 23, 42, 0.14);
     }
 
-    .subtitle {
+    .avatar-square img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .avatar-fallback { font-size: 32px; line-height: 1; display: none; }
+    .avatar-label { font-size: 11px; font-weight: 700; color: var(--muted); }
+
+    .search-input {
+      width: 100%;
+      padding: 11px 14px;
       font-size: 14px;
-      color: var(--muted);
+      font-family: inherit;
+      background: var(--bg);
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      outline: none;
     }
 
-    .layout {
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 20px;
-      align-items: start;
-    }
+    .search-input:focus { background: var(--surface); border-color: var(--primary); }
 
-    @media (max-width: 820px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-    }
+    main { flex: 1; padding: 28px 0 48px; }
+    .section-block { margin-bottom: 32px; }
 
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 22px;
-      box-shadow: 0 6px 20px -12px rgba(15, 23, 42, 0.12);
-      margin-bottom: 18px;
-    }
-
-    .card-title {
-      font-size: 16px;
-      font-weight: 800;
-      margin-bottom: 14px;
+    .board-meta {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      margin-bottom: 14px;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 700;
     }
 
-    .count-pill {
-      font-size: 12px;
+    .board-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .board-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .board-card:hover,
+    .board-card.selected {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: 0 10px 24px -12px rgba(15, 23, 42, 0.16);
+    }
+
+    .card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+    .category-badge { font-size: 12px; font-weight: 700; color: var(--ink); background: var(--badge-bg); padding: 4px 10px; border-radius: 8px; }
+    .post-no { font-size: 12px; color: var(--muted); font-weight: 600; }
+    .card-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--muted);
+      margin-bottom: 14px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
       font-weight: 700;
       color: var(--primary);
-      background: var(--primary-soft);
-      padding: 3px 10px;
-      border-radius: 999px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
     }
 
-    .mode-switch {
+    .app-nav-tabs {
       display: flex;
-      background: var(--surface-alt);
-      padding: 4px;
-      border-radius: 12px;
-      margin-bottom: 16px;
-      gap: 4px;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      padding: 8px;
+      border-radius: 14px;
+      margin-bottom: 18px;
     }
 
-    .mode-btn {
+    .app-tab-btn {
       flex: 1;
-      padding: 10px 12px;
+      min-width: 150px;
+      padding: 10px 14px;
       border: none;
       background: transparent;
-      border-radius: 9px;
+      border-radius: 10px;
       font-family: inherit;
       font-size: 14px;
       font-weight: 700;
       color: var(--muted);
       cursor: pointer;
-      transition: all 0.15s ease;
     }
 
-    .mode-btn.active {
+    .app-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .app-panel { display: none; }
+    .app-panel.active { display: block; }
+
+    .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; align-items: start; }
+    @media (max-width: 820px) { .two-col { grid-template-columns: 1fr; } }
+
+    .card {
       background: var(--surface);
-      color: var(--primary);
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 6px 20px -12px rgba(15, 23, 42, 0.12);
+      margin-bottom: 16px;
     }
 
-    textarea.list-input {
-      width: 100%;
-      min-height: 220px;
-      padding: 12px 14px;
-      font-size: 14px;
-      font-family: inherit;
-      color: var(--ink);
-      background: #fcfcfd;
-      border: 1.5px solid var(--line);
-      border-radius: 12px;
-      resize: vertical;
-      outline: none;
-      line-height: 1.6;
-    }
+    .card-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .mode-switch { display: flex; background: var(--surface-alt); padding: 4px; border-radius: 10px; margin-bottom: 14px; gap: 4px; }
+    .mode-btn { flex: 1; padding: 8px 10px; border: none; background: transparent; border-radius: 8px; font-family: inherit; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; }
+    .mode-btn.active { background: var(--surface); color: var(--primary); box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06); }
 
-    textarea.list-input:focus {
-      border-color: var(--primary);
-      background: var(--surface);
-    }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
 
-    .field {
-      margin-bottom: 14px;
-    }
-
-    .field label {
-      display: block;
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    input[type="number"] {
+    input[type="text"], input[type="number"], select, textarea {
       width: 100%;
       padding: 10px 12px;
       font-size: 14px;
@@ -189,43 +232,11 @@
       outline: none;
     }
 
-    input[type="number"]:focus {
-      border-color: var(--primary);
-    }
-
-    .check-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      background: var(--surface-alt);
-      padding: 11px 14px;
-      border-radius: 12px;
-      margin-bottom: 14px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .check-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-    }
-
-    input[type="checkbox"] {
-      width: 17px;
-      height: 17px;
-      accent-color: var(--primary);
-      cursor: pointer;
-    }
-
-    .btn-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
-    }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .item-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+    .item-row { display: grid; grid-template-columns: 1.4fr 1fr auto; gap: 8px; align-items: center; }
+    .ratio-row { display: grid; grid-template-columns: 1.3fr 0.8fr auto; gap: 8px; align-items: center; }
 
     .btn {
       display: inline-flex;
@@ -239,82 +250,94 @@
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
-      transition: background 0.15s ease, transform 0.1s ease;
+      text-decoration: none;
     }
 
-    .btn:active {
-      transform: scale(0.99);
+    .btn-primary { background: var(--primary); color: #ffffff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: var(--surface-alt); color: var(--ink); }
+    .btn-outline { background: var(--surface); color: var(--ink); border: 1.5px solid var(--line); }
+    .btn-sm { padding: 7px 10px; font-size: 12px; border-radius: 8px; }
+    .btn-icon { width: 36px; height: 38px; padding: 0; background: #fef2f2; color: var(--danger); border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+    .summary-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--primary-soft);
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-top: 12px;
     }
 
-    .btn-primary {
-      background: var(--primary);
-      color: #ffffff;
-    }
+    .summary-strip .label { font-size: 13px; font-weight: 700; color: #1e40af; }
+    .summary-strip .amount { font-size: 19px; font-weight: 800; color: var(--primary); }
 
-    .btn-primary:hover {
-      background: var(--primary-hover);
-    }
+    .result-box { background: var(--surface-alt); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+    .result-main-amount { font-size: 23px; font-weight: 800; margin-bottom: 4px; }
+    .result-sub { font-size: 13px; color: var(--muted); }
+    .member-results { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
 
-    .btn-secondary {
-      background: var(--surface-alt);
-      color: var(--ink);
-    }
-
-    .btn-secondary:hover {
-      background: #e2e8f0;
-    }
-
-    .btn-outline {
+    .member-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       background: var(--surface);
-      color: var(--ink);
-      border: 1.5px solid var(--line);
+      border: 1px solid var(--line);
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 14px;
     }
 
-    .btn-outline:hover {
-      border-color: var(--primary);
-      color: var(--primary);
+    .member-item .name { font-weight: 700; }
+    .member-item .meta { font-size: 12px; color: var(--muted); margin-left: 6px; }
+    .member-item .val { font-weight: 800; color: var(--primary); }
+
+    textarea.notice-area { min-height: 200px; resize: vertical; line-height: 1.6; font-size: 13.5px; background: #fcfcfd; }
+    .feedback-msg { font-size: 13px; font-weight: 700; color: var(--success); min-height: 18px; margin-top: 8px; }
+    .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+    /* QR 스타일 */
+    .qr-preview-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface-alt);
+      border: 1.5px dashed var(--line);
+      border-radius: 12px;
+      padding: 20px;
+      min-height: 220px;
+      margin-bottom: 12px;
     }
 
-    .btn-sm {
-      padding: 7px 11px;
-      font-size: 12px;
+    #qrcode-canvas-wrap img, #qrcode-canvas-wrap canvas {
+      background: #ffffff;
+      padding: 10px;
       border-radius: 8px;
     }
 
-    .result-panel {
-      min-height: 240px;
-      background: var(--surface-alt);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 14px;
-    }
-
-    .empty-msg {
-      color: var(--muted);
-      font-size: 14px;
-      text-align: center;
-      padding: 56px 16px;
-    }
-
-    .pick-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .pick-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--surface);
-      border: 1px solid var(--line);
+    .drop-box {
+      border: 2px dashed #cbd5e1;
       border-radius: 12px;
-      padding: 12px 14px;
+      padding: 26px 16px;
+      text-align: center;
+      background: var(--surface-alt);
+      cursor: pointer;
+      margin-bottom: 12px;
     }
 
+    .drop-box.dragover { border-color: var(--primary); background: var(--primary-soft); }
+    #qr-read-preview { max-width: 150px; max-height: 150px; border-radius: 8px; margin-top: 10px; display: none; }
+
+    /* 뽑기 & 팀 나누기 스타일 */
+    .pick-list { display: flex; flex-direction: column; gap: 8px; }
+    .pick-item { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
     .rank-badge {
-      min-width: 28px;
-      height: 28px;
+      min-width: 26px;
+      height: 26px;
       border-radius: 999px;
       background: var(--accent-soft);
       color: var(--accent);
@@ -324,202 +347,741 @@
       align-items: center;
       justify-content: center;
     }
+    .teams-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+    .team-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+    .team-header { font-size: 13px; font-weight: 800; color: var(--primary); margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; }
+    .team-members { list-style: none; font-size: 13.5px; font-weight: 600; display: flex; flex-direction: column; gap: 4px; }
 
-    .pick-name {
-      font-size: 16px;
-      font-weight: 800;
-    }
-
-    .teams-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-      gap: 12px;
-    }
-
-    .team-card {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 12px 14px;
-    }
-
-    .team-header {
-      font-size: 13px;
-      font-weight: 800;
-      color: var(--primary);
-      margin-bottom: 8px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid var(--line);
+    .check-row {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-    }
-
-    .team-members {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      font-size: 14px;
+      gap: 10px;
+      background: var(--surface-alt);
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      font-size: 13.5px;
       font-weight: 600;
     }
 
-    .history-box {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px dashed var(--line);
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .copy-status {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--success);
-      min-height: 20px;
-      margin-top: 8px;
-    }
+    footer { background: var(--surface); border-top: 1px solid var(--line); padding: 20px 0; font-size: 13px; color: var(--muted); }
+    .footer-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
   </style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <span class="badge">RANDOM PICK &amp; TEAM SPLIT</span>
-      <h1>랜덤 뽑기 &amp; 팀 나누기</h1>
-      <p class="subtitle">이름이나 항목을 줄바꿈으로 붙여 넣어 당첨자를 뽑거나 원하는 팀 수로 나눌 수 있습니다.</p>
-    </header>
+  <header>
+    <div class="wrap">
+      <div class="header-top">
+        <div class="brand-info">
+          <span class="tag">WEB APP BOARD</span>
+          <h1>내 웹앱 게시판</h1>
+          <p class="subtitle">정산 계산기, QR 생성·읽기, 랜덤 뽑기 &amp; 팀 나누기 도구를 한곳에서 바로 사용하세요.</p>
+        </div>
 
-    <div class="layout">
-      <!-- 좌측: 목록 및 설정 -->
-      <div>
-        <section class="card">
-          <div class="card-title">
-            <span>1. 이름 · 항목 목록 입력</span>
-            <span id="item-count-pill" class="count-pill">0개 항목</span>
+        <div class="avatar-box">
+          <div class="avatar-square" title="사용자 아바타 이모지">
+            <img id="header-avatar-img" src="./16defad8-5298-41a8-bae5-a18224f12069.png" alt="사용자 아바타 이모지" />
+            <span id="header-avatar-fallback" class="avatar-fallback">🙂</span>
           </div>
-          <textarea
-            id="items-textarea"
-            class="list-input"
-            placeholder="한 줄에 한 명 또는 한 항목씩 입력하세요.&#10;예)&#10;김민준&#10;이서연&#10;박지호&#10;최수아"
-            oninput="updateItemCount()"
-          ></textarea>
-          <div class="btn-row">
-            <button type="button" class="btn btn-outline btn-sm" onclick="loadSampleList()">예시 목록 채우기</button>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="clearList()">목록 지우기</button>
-          </div>
-        </section>
-
-        <section class="card">
-          <div class="card-title"><span>2. 모드 및 옵션 설정</span></div>
-
-          <div class="mode-switch">
-            <button type="button" id="mode-pick-btn" class="mode-btn active" onclick="setMode('pick')">한 명 / 한 개 뽑기</button>
-            <button type="button" id="mode-team-btn" class="mode-btn" onclick="setMode('team')">원하는 팀 수로 나누기</button>
-          </div>
-
-          <!-- 뽑기 옵션 -->
-          <div id="pick-options">
-            <div class="field">
-              <label for="pick-count">이번에 뽑을 인원 / 항목 수</label>
-              <input type="number" id="pick-count" min="1" step="1" value="1" />
-            </div>
-            <div class="check-row">
-              <label class="check-label" for="exclude-picked">
-                <input type="checkbox" id="exclude-picked" checked />
-                <span>이미 뽑힌 항목 중복 제외</span>
-              </label>
-              <button type="button" class="btn btn-secondary btn-sm" onclick="resetPickedPool()">제외 기록 초기화</button>
-            </div>
-          </div>
-
-          <!-- 팀 나누기 옵션 -->
-          <div id="team-options" style="display: none;">
-            <div class="field">
-              <label for="team-count">나눌 팀 수 (개)</label>
-              <input type="number" id="team-count" min="2" step="1" value="2" />
-            </div>
-          </div>
-
-          <div class="btn-row">
-            <button type="button" id="run-btn" class="btn btn-primary" style="flex: 1;" onclick="runAction()">뽑기 실행</button>
-            <button type="button" id="rerun-btn" class="btn btn-outline" onclick="runAction()">결과 다시 뽑기</button>
-          </div>
-        </section>
+          <span class="avatar-label">MY AVATAR</span>
+        </div>
       </div>
 
-      <!-- 우측: 결과 및 복사 -->
-      <div>
-        <section class="card">
-          <div class="card-title">
-            <span id="result-title">추첨 결과</span>
-            <span id="remain-pill" class="count-pill">대기 중</span>
-          </div>
-
-          <div id="result-panel" class="result-panel">
-            <div class="empty-msg">왼쪽에 목록을 입력하고 실행 버튼을 눌러 주세요.</div>
-          </div>
-
-          <div class="btn-row">
-            <button type="button" class="btn btn-primary" style="flex: 1;" onclick="copyResult()">결과 복사</button>
-            <button type="button" class="btn btn-outline" onclick="clearResult()">결과 지우기</button>
-          </div>
-          <div id="copy-status" class="copy-status"></div>
-        </section>
-      </div>
+      <input
+        type="search"
+        id="search-input"
+        class="search-input"
+        placeholder="앱 이름이나 설명으로 검색해 보세요..."
+        oninput="renderBoard()"
+      />
     </div>
-  </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <!-- 게시판 앱 카드 목록 -->
+      <section class="section-block">
+        <div class="board-meta">
+          <span>등록된 앱 목록</span>
+          <span id="item-count">총 0개</span>
+        </div>
+        <div id="board-list" class="board-list"></div>
+      </section>
+
+      <!-- 도구 전환 탭 -->
+      <div class="app-nav-tabs" id="tool-workspace">
+        <button type="button" class="app-tab-btn active" data-tab="split" onclick="switchAppTab('split')">간단 정산 · 견적 계산기</button>
+        <button type="button" class="app-tab-btn" data-tab="qr" onclick="switchAppTab('qr')">QR 코드 생성기 &amp; 리더기</button>
+        <button type="button" class="app-tab-btn" data-tab="pick" onclick="switchAppTab('pick')">랜덤 뽑기 &amp; 팀 나누기</button>
+      </div>
+
+      <!-- 1. 간단 정산 계산기 -->
+      <section class="app-panel active" id="panel-split">
+        <div class="two-col">
+          <div>
+            <div class="card">
+              <div class="card-title"><span>1. 모임 · 행사 기본 정보</span></div>
+              <div class="field">
+                <label for="event-title">정산 / 행사 제목</label>
+                <input type="text" id="event-title" placeholder="예: 11월 모임 정산 / 행사 견적 초안" oninput="updateSplitAll()" />
+              </div>
+              <div class="field" style="margin-bottom: 0;">
+                <label for="account-info">입금 계좌 / 안내 메모 (선택)</label>
+                <input type="text" id="account-info" placeholder="예: 농협 123-4567-8901-23 홍길동" oninput="updateSplitAll()" />
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title"><span>2. 비용 입력</span></div>
+              <div class="mode-switch">
+                <button type="button" id="mode-items-btn" class="mode-btn active" onclick="setCostMode('items')">항목 여러 줄 추가</button>
+                <button type="button" id="mode-total-btn" class="mode-btn" onclick="setCostMode('total')">총액 직접 입력</button>
+              </div>
+
+              <div id="cost-items-panel">
+                <div id="item-list" class="item-list"></div>
+                <div class="toolbar">
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="addItemRow()">+ 항목 줄 추가</button>
+                  <button type="button" class="btn btn-outline btn-sm" onclick="loadSampleItems()">예시 불러오기</button>
+                </div>
+              </div>
+
+              <div id="cost-total-panel" style="display: none;">
+                <div class="field" style="margin-bottom: 0;">
+                  <label for="direct-total">총 금액 (원)</label>
+                  <input type="number" id="direct-total" min="0" step="100" value="120000" oninput="updateSplitAll()" />
+                </div>
+              </div>
+
+              <div class="summary-strip">
+                <span class="label">합계 금액</span>
+                <span id="total-display" class="amount">0원</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title"><span>3. 인원 수 또는 비율 설정</span></div>
+              <div class="mode-switch">
+                <button type="button" id="split-equal-btn" class="mode-btn active" onclick="setSplitMode('equal')">인원 수 (N분의 1)</button>
+                <button type="button" id="split-ratio-btn" class="mode-btn" onclick="setSplitMode('ratio')">비율 배분</button>
+              </div>
+
+              <div id="split-equal-panel">
+                <div class="field">
+                  <label for="headcount">정산 인원 수 (명)</label>
+                  <input type="number" id="headcount" min="1" step="1" value="4" oninput="updateSplitAll()" />
+                </div>
+              </div>
+
+              <div id="split-ratio-panel" style="display: none;">
+                <div id="ratio-list" class="item-list"></div>
+                <div class="toolbar">
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="addRatioRow()">+ 참여자/항목 추가</button>
+                  <button type="button" class="btn btn-outline btn-sm" onclick="resetEqualRatio()">동일 비율 맞추기</button>
+                </div>
+                <p id="ratio-sum-hint" class="hint">입력된 비율 합계: 4</p>
+              </div>
+
+              <div class="row-2" style="margin-top: 12px;">
+                <div class="field" style="margin-bottom: 0;">
+                  <label for="round-mode">원단위 계산 방식</label>
+                  <select id="round-mode" onchange="updateSplitAll()">
+                    <option value="round">10원 단위 반올림</option>
+                    <option value="floor">10원 단위 내림</option>
+                    <option value="ceil">10원 단위 올림</option>
+                    <option value="exact1">1원 단위 내림</option>
+                  </select>
+                </div>
+                <div class="field" style="margin-bottom: 0;">
+                  <label for="adjust-first">단수 차액 처리</label>
+                  <select id="adjust-first" onchange="updateSplitAll()">
+                    <option value="first">첫 번째 인원에 차액 반영</option>
+                    <option value="none">단순 계산 금액 그대로 표시</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card">
+              <div class="card-title"><span>계산 결과</span></div>
+              <div class="result-box">
+                <div id="per-person-headline" class="result-main-amount">0원</div>
+                <div id="per-person-sub" class="result-sub">총액 0원 기준</div>
+              </div>
+              <div id="member-results" class="member-results"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">
+                <span>정산 안내 문구</span>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="buildNoticeText()">문구 새로고침</button>
+              </div>
+              <textarea id="notice-output" class="notice-area" readonly></textarea>
+              <div class="toolbar">
+                <button type="button" class="btn btn-primary" style="flex: 1;" onclick="copyNoticeText()">안내문 복사</button>
+                <button type="button" class="btn btn-outline" onclick="clearSplitAll()">초기화</button>
+              </div>
+              <div id="split-copy-status" class="feedback-msg"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. QR 코드 생성기 & 리더기 -->
+      <section class="app-panel" id="panel-qr">
+        <div class="two-col">
+          <div class="card">
+            <div class="card-title"><span>QR 코드 생성</span></div>
+            <div class="field">
+              <label for="qr-url-input">링크(URL) 또는 텍스트 입력</label>
+              <input type="text" id="qr-url-input" placeholder="https://kimsungtea27-maker.github.io/map/" oninput="generateQRCode()" />
+            </div>
+            <div class="qr-preview-box">
+              <div id="qrcode-canvas-wrap"></div>
+              <p id="qr-empty-hint" class="hint">링크나 텍스트를 입력하면 QR 코드가 생성됩니다.</p>
+            </div>
+            <div class="toolbar">
+              <button type="button" id="qr-download-btn" class="btn btn-primary" style="flex: 1;" onclick="downloadQRCode()" disabled>PNG 저장</button>
+              <button type="button" id="qr-copy-btn" class="btn btn-outline" onclick="copyQRCanvas()" disabled>QR 복사</button>
+            </div>
+            <div id="qr-gen-status" class="feedback-msg"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-title"><span>QR 이미지 읽기 (링크 추출)</span></div>
+            <div class="drop-box" id="qr-drop-zone" onclick="document.getElementById('qr-file-input').click()">
+              <p><strong>클릭하여 이미지 선택</strong>, 끌어다 놓기 또는 Ctrl+V</p>
+              <p class="hint">QR 코드가 포함된 이미지를 올려 링크를 추출하세요.</p>
+              <img id="qr-read-preview" alt="QR 미리보기" />
+              <input type="file" id="qr-file-input" accept="image/*" style="display: none;" onchange="handleQRImageFile(this.files[0])" />
+            </div>
+            <div class="result-box" id="qr-decoded-box" style="display: none;">
+              <div class="hint" style="margin-top: 0; margin-bottom: 6px; font-weight: 700;">추출된 링크 / 내용</div>
+              <div id="qr-decoded-text" style="font-weight: 700; word-break: break-all; margin-bottom: 10px;"></div>
+              <div class="toolbar" style="margin-top: 0;">
+                <a id="qr-open-link" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">링크 열기</a>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="copyDecodedQR()">주소 복사</button>
+              </div>
+            </div>
+            <div id="qr-read-status" class="feedback-msg"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. 랜덤 뽑기 & 팀 나누기 -->
+      <section class="app-panel" id="panel-pick">
+        <div class="two-col">
+          <div>
+            <div class="card">
+              <div class="card-title">
+                <span>1. 이름 · 항목 목록 (줄바꿈 구분)</span>
+                <span id="pick-count-badge" class="category-badge">0개</span>
+              </div>
+              <textarea
+                id="pick-items-input"
+                rows="8"
+                placeholder="한 줄에 한 명 또는 한 항목씩 입력하세요.&#10;예)&#10;김민준&#10;이서연&#10;박지호&#10;최수아"
+                oninput="updatePickBadge()"
+              ></textarea>
+              <div class="toolbar">
+                <button type="button" class="btn btn-outline btn-sm" onclick="fillPickSample()">예시 채우기</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="clearPickList()">목록 지우기</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title"><span>2. 뽑기 / 팀 나누기 설정</span></div>
+              <div class="mode-switch">
+                <button type="button" id="pick-mode-single-btn" class="mode-btn active" onclick="setPickSubMode('single')">한 명 / 한 개 뽑기</button>
+                <button type="button" id="pick-mode-team-btn" class="mode-btn" onclick="setPickSubMode('team')">원하는 팀 수로 나누기</button>
+              </div>
+
+              <div id="pick-single-controls">
+                <div class="field">
+                  <label for="pick-draw-count">뽑을 인원 / 항목 수</label>
+                  <input type="number" id="pick-draw-count" min="1" step="1" value="1" />
+                </div>
+                <div class="check-row">
+                  <label for="pick-exclude-dup" style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0;">
+                    <input type="checkbox" id="pick-exclude-dup" checked />
+                    <span>중복 제외</span>
+                  </label>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="resetPickHistory()">제외 초기화</button>
+                </div>
+              </div>
+
+              <div id="pick-team-controls" style="display: none;">
+                <div class="field">
+                  <label for="pick-team-num">나눌 팀 수</label>
+                  <input type="number" id="pick-team-num" min="2" step="1" value="2" />
+                </div>
+              </div>
+
+              <div class="toolbar">
+                <button type="button" class="btn btn-primary" style="flex: 1;" onclick="executePickOrTeam()">실행하기</button>
+                <button type="button" class="btn btn-outline" onclick="executePickOrTeam()">결과 다시 뽑기</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">
+              <span id="pick-result-title">결과</span>
+              <span id="pick-status-badge" class="category-badge">대기</span>
+            </div>
+            <div id="pick-result-area" class="result-box" style="min-height: 220px;">
+              <p class="hint" style="text-align: center; padding-top: 60px;">목록을 입력하고 실행하기 버튼을 눌러 주세요.</p>
+            </div>
+            <div class="toolbar">
+              <button type="button" class="btn btn-primary" style="flex: 1;" onclick="copyPickResult()">결과 복사</button>
+            </div>
+            <div id="pick-copy-status" class="feedback-msg"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <canvas id="qr-decode-canvas" style="display: none;"></canvas>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>GitHub Pages · 통합 웹앱 대문</span>
+      <span><a href="./gemini-code-1795744020769.html" style="color: var(--primary); font-weight: 700; text-decoration: none;">업로드 HTML 파일 열기 →</a></span>
+    </div>
+  </footer>
 
   <script>
-    let currentMode = 'pick'; // 'pick' | 'team'
-    let excludedSet = new Set();
-    let lastPlainText = '';
+    const AVATAR_IMAGE = './16defad8-5298-41a8-bae5-a18224f12069.png';
 
-    const sampleNames = [
-      '김하준', '이서윤', '박도윤', '최지안',
-      '정시우', '강하윤', '조은우', '윤아린'
+    const APPS = [
+      {
+        category: '정산 · 견적',
+        title: '간단 정산 · 견적 계산기',
+        description: '항목별 비용 또는 총액을 입력하고 인원·비율별 정산 금액과 안내 문구를 자동 생성합니다.',
+        tab: 'split',
+        date: '통합 실행'
+      },
+      {
+        category: 'QR 도구',
+        title: 'QR 코드 생성기 & 리더기',
+        description: '링크 입력 시 QR 코드를 즉시 생성하고, 이미지를 업로드해 링크를 추출합니다.',
+        tab: 'qr',
+        date: '통합 실행'
+      },
+      {
+        category: '추첨 · 편성',
+        title: '랜덤 뽑기 & 팀 나누기',
+        description: '줄바꿈 목록으로 한 명/한 개 뽑기(중복 제외) 또는 원하는 팀 수로 나눕니다.',
+        tab: 'pick',
+        date: '통합 실행'
+      },
+      {
+        category: '저장소 파일',
+        title: '업로드된 HTML 페이지',
+        description: '저장소에 함께 올라간 gemini-code-1795744020769.html 파일을 엽니다.',
+        href: './gemini-code-1795744020769.html',
+        date: '파일 열기'
+      }
     ];
 
-    function getLines() {
-      return document
-        .getElementById('items-textarea')
-        .value.split(/\r?\n/)
-        .map((line) => line.trim())
-        .filter((line) => line.length > 0);
+    (function initAvatar() {
+      const img = document.getElementById('header-avatar-img');
+      const fallback = document.getElementById('header-avatar-fallback');
+      img.src = AVATAR_IMAGE;
+      img.onerror = () => {
+        img.style.display = 'none';
+        fallback.style.display = 'inline';
+      };
+    })();
+
+    function switchAppTab(tabKey) {
+      document.querySelectorAll('.app-tab-btn').forEach((b) => {
+        b.classList.toggle('active', b.dataset.tab === tabKey);
+      });
+      document.querySelectorAll('.app-panel').forEach((p) => {
+        p.classList.remove('active');
+      });
+      const targetPanel = document.getElementById(`panel-${tabKey}`);
+      if (targetPanel) {
+        targetPanel.classList.add('active');
+        document.getElementById('tool-workspace').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      renderBoard();
     }
 
-    function updateItemCount() {
-      const lines = getLines();
-      document.getElementById('item-count-pill').textContent = `${lines.length}개 항목`;
-      syncRemainBadge(lines);
+    function renderBoard() {
+      const keyword = document.getElementById('search-input').value.trim().toLowerCase();
+      const listEl = document.getElementById('board-list');
+      const countEl = document.getElementById('item-count');
+      const activeTab = document.querySelector('.app-tab-btn.active')?.dataset.tab || '';
+
+      const filtered = APPS.filter((app) => {
+        const text = `${app.title} ${app.description} ${app.category}`.toLowerCase();
+        return text.includes(keyword);
+      });
+
+      countEl.textContent = `총 ${filtered.length}개`;
+
+      listEl.innerHTML = filtered
+        .map((app, idx) => {
+          const no = String(filtered.length - idx).padStart(2, '0');
+          if (app.href) {
+            return `
+              <a class="board-card" href="${app.href}">
+                <div>
+                  <div class="card-top"><span class="category-badge">${app.category}</span><span class="post-no">No. ${no}</span></div>
+                  <h2 class="card-title">${app.title}</h2>
+                  <p class="card-desc">${app.description}</p>
+                </div>
+                <div class="card-footer"><span>${app.date}</span><span>열기 →</span></div>
+              </a>
+            `;
+          }
+          const isSelected = app.tab === activeTab ? 'selected' : '';
+          return `
+            <div class="board-card ${isSelected}" role="button" tabindex="0" onclick="switchAppTab('${app.tab}')" onkeydown="if(event.key==='Enter')switchAppTab('${app.tab}')">
+              <div>
+                <div class="card-top"><span class="category-badge">${app.category}</span><span class="post-no">No. ${no}</span></div>
+                <h2 class="card-title">${app.title}</h2>
+                <p class="card-desc">${app.description}</p>
+              </div>
+              <div class="card-footer"><span>${app.date}</span><span>바로 사용 →</span></div>
+            </div>
+          `;
+        })
+        .join('');
     }
 
-    function syncRemainBadge(lines = getLines()) {
-      const remainPill = document.getElementById('remain-pill');
-      if (currentMode === 'team') {
-        const tCount = Math.max(2, Math.floor(Number(document.getElementById('team-count').value) || 2));
-        remainPill.textContent = `${tCount}개 팀 배정`;
+    /* ===== 1. 정산 계산기 ===== */
+    let costMode = 'items';
+    let splitMode = 'equal';
+    const initialItems = [
+      { name: '식사 비용', amount: 84000 },
+      { name: '음료 및 디저트', amount: 26000 }
+    ];
+    const initialRatios = [
+      { name: '참여자 1', ratio: 1 },
+      { name: '참여자 2', ratio: 1 },
+      { name: '참여자 3', ratio: 1 },
+      { name: '참여자 4', ratio: 1 }
+    ];
+
+    function formatWon(n) { return (Number.isFinite(n) ? Math.round(n) : 0).toLocaleString('ko-KR') + '원'; }
+    function escapeAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+    function escapeHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    function setCostMode(mode) {
+      costMode = mode;
+      document.getElementById('mode-items-btn').classList.toggle('active', mode === 'items');
+      document.getElementById('mode-total-btn').classList.toggle('active', mode === 'total');
+      document.getElementById('cost-items-panel').style.display = mode === 'items' ? 'block' : 'none';
+      document.getElementById('cost-total-panel').style.display = mode === 'total' ? 'block' : 'none';
+      updateSplitAll();
+    }
+
+    function setSplitMode(mode) {
+      splitMode = mode;
+      document.getElementById('split-equal-btn').classList.toggle('active', mode === 'equal');
+      document.getElementById('split-ratio-btn').classList.toggle('active', mode === 'ratio');
+      document.getElementById('split-equal-panel').style.display = mode === 'equal' ? 'block' : 'none';
+      document.getElementById('split-ratio-panel').style.display = mode === 'ratio' ? 'block' : 'none';
+      updateSplitAll();
+    }
+
+    function createItemRowElement(name = '', amount = '') {
+      const row = document.createElement('div');
+      row.className = 'item-row';
+      row.innerHTML = `
+        <input type="text" class="item-name" placeholder="항목명" value="${escapeAttr(name)}" oninput="updateSplitAll()" />
+        <input type="number" class="item-amount" placeholder="금액(원)" min="0" step="100" value="${amount}" oninput="updateSplitAll()" />
+        <button type="button" class="btn-icon" onclick="removeSplitRow(this)">×</button>
+      `;
+      return row;
+    }
+
+    function createRatioRowElement(name = '', ratio = 1) {
+      const row = document.createElement('div');
+      row.className = 'ratio-row';
+      row.innerHTML = `
+        <input type="text" class="ratio-name" placeholder="이름 또는 구분" value="${escapeAttr(name)}" oninput="updateSplitAll()" />
+        <input type="number" class="ratio-val" placeholder="비율" min="0" step="0.5" value="${ratio}" oninput="updateSplitAll()" />
+        <button type="button" class="btn-icon" onclick="removeSplitRow(this)">×</button>
+      `;
+      return row;
+    }
+
+    function addItemRow(name = '', amount = '') { document.getElementById('item-list').appendChild(createItemRowElement(name, amount)); updateSplitAll(); }
+    function addRatioRow(name = '', ratio = 1) {
+      const list = document.getElementById('ratio-list');
+      list.appendChild(createRatioRowElement(name || `참여자 ${list.children.length + 1}`, ratio));
+      updateSplitAll();
+    }
+
+    function removeSplitRow(btn) {
+      const parent = btn.parentElement.parentElement;
+      if (parent.children.length <= 1) {
+        parent.querySelectorAll('input').forEach((inp, i) => { inp.value = (i === 1 && parent.id === 'ratio-list') ? '1' : ''; });
       } else {
-        const exclude = document.getElementById('exclude-picked').checked;
-        if (!exclude) {
-          remainPill.textContent = `전체 ${lines.length}개 대상`;
-        } else {
-          const remaining = lines.filter((item) => !excludedSet.has(item)).length;
-          remainPill.textContent = `남은 후보 ${remaining}개`;
+        btn.parentElement.remove();
+      }
+      updateSplitAll();
+    }
+
+    function loadSampleItems() {
+      const list = document.getElementById('item-list');
+      list.innerHTML = '';
+      [{ name: '장소 대관료', amount: 50000 }, { name: '다과 · 음료비', amount: 32000 }, { name: '현수막 · 출력물', amount: 18000 }].forEach((it) => list.appendChild(createItemRowElement(it.name, it.amount)));
+      updateSplitAll();
+    }
+
+    function resetEqualRatio() {
+      document.querySelectorAll('#ratio-list .ratio-val').forEach((inp) => { inp.value = 1; });
+      updateSplitAll();
+    }
+
+    function getItemsData() {
+      return Array.from(document.querySelectorAll('#item-list .item-row')).map((row, idx) => {
+        const rawName = row.querySelector('.item-name').value.trim();
+        const amount = Math.max(0, Number(row.querySelector('.item-amount').value) || 0);
+        return (rawName !== '' || amount > 0) ? { name: rawName || `항목 ${idx + 1}`, amount } : null;
+      }).filter(Boolean);
+    }
+
+    function getTotalAmount(items) {
+      if (costMode === 'total') return Math.max(0, Number(document.getElementById('direct-total').value) || 0);
+      return items.reduce((s, x) => s + x.amount, 0);
+    }
+
+    function roundByMode(val, mode) {
+      if (!Number.isFinite(val) || val <= 0) return 0;
+      if (mode === 'round') return Math.round(val / 10) * 10;
+      if (mode === 'floor') return Math.floor(val / 10) * 10;
+      if (mode === 'ceil') return Math.ceil(val / 10) * 10;
+      return Math.floor(val);
+    }
+
+    function calculateShares(total) {
+      const roundMode = document.getElementById('round-mode').value;
+      const adjustFirst = document.getElementById('adjust-first').value === 'first';
+      if (splitMode === 'equal') {
+        const count = Math.max(1, Math.floor(Number(document.getElementById('headcount').value) || 1));
+        const baseShare = roundByMode(total / count, roundMode);
+        const shares = Array.from({ length: count }, (_, i) => ({ label: `${i + 1}번 인원`, ratioLabel: `1/${count}`, amount: baseShare }));
+        if (adjustFirst && shares.length > 0 && total > 0) {
+          shares[0].amount = Math.max(0, total - shares.slice(1).reduce((s, x) => s + x.amount, 0));
         }
+        return { mode: 'equal', count, baseShare, shares };
+      } else {
+        const entries = Array.from(document.querySelectorAll('#ratio-list .ratio-row')).map((row, idx) => ({
+          name: row.querySelector('.ratio-name').value.trim() || `참여자 ${idx + 1}`,
+          ratio: Math.max(0, Number(row.querySelector('.ratio-val').value) || 0)
+        }));
+        const sum = entries.reduce((s, e) => s + e.ratio, 0);
+        document.getElementById('ratio-sum-hint').textContent = `입력된 비율 합계: ${sum}`;
+        if (sum <= 0) {
+          return { mode: 'ratio', count: entries.length, baseShare: 0, shares: entries.map((e) => ({ label: e.name, ratioLabel: `비율 ${e.ratio}`, amount: 0 })) };
+        }
+        const shares = entries.map((e) => {
+          const pct = ((e.ratio / sum) * 100).toFixed(1).replace(/\.0$/, '');
+          return { label: e.name, ratioLabel: `${e.ratio} (${pct}%)`, amount: roundByMode((total * e.ratio) / sum, roundMode) };
+        });
+        if (adjustFirst && shares.length > 0 && total > 0) {
+          shares[0].amount = Math.max(0, total - shares.slice(1).reduce((s, x) => s + x.amount, 0));
+        }
+        return { mode: 'ratio', count: entries.length, baseShare: shares[0] ? shares[0].amount : 0, shares };
       }
     }
 
-    function setMode(mode) {
-      currentMode = mode;
-      document.getElementById('mode-pick-btn').classList.toggle('active', mode === 'pick');
-      document.getElementById('mode-team-btn').classList.toggle('active', mode === 'team');
-      document.getElementById('pick-options').style.display = mode === 'pick' ? 'block' : 'none';
-      document.getElementById('team-options').style.display = mode === 'team' ? 'block' : 'none';
-      document.getElementById('result-title').textContent = mode === 'pick' ? '추첨 결과' : '팀 나누기 결과';
-      document.getElementById('run-btn').textContent = mode === 'pick' ? '뽑기 실행' : '팀 나누기 실행';
-      syncRemainBadge();
+    function updateSplitAll() {
+      const items = getItemsData();
+      const total = getTotalAmount(items);
+      document.getElementById('total-display').textContent = formatWon(total);
+      const calc = calculateShares(total);
+      document.getElementById('per-person-headline').textContent = calc.mode === 'equal' ? `1인당 ${formatWon(calc.baseShare)}` : `총 ${formatWon(total)} (${calc.count}명/항목 배분)`;
+      document.getElementById('per-person-sub').textContent = calc.mode === 'equal' ? `총 ${formatWon(total)} ÷ ${calc.count}명` : '비율에 따라 계산된 금액입니다.';
+      document.getElementById('member-results').innerHTML = calc.shares.map((s) => `<div class="member-item"><div><span class="name">${escapeHtml(s.label)}</span><span class="meta">${escapeHtml(s.ratioLabel)}</span></div><span class="val">${formatWon(s.amount)}</span></div>`).join('');
+      buildNoticeText(items, total, calc);
     }
 
-    function shuffleArray(arr) {
+    function buildNoticeText(items = getItemsData(), total = getTotalAmount(items), calc = calculateShares(total)) {
+      const title = document.getElementById('event-title').value.trim() || '모임 정산 안내';
+      const account = document.getElementById('account-info').value.trim();
+      const lines = [`[${title}]`, ''];
+      if (costMode === 'items' && items.length > 0) {
+        lines.push('■ 비용 내역');
+        items.forEach((it) => lines.push(`- ${it.name}: ${formatWon(it.amount)}`));
+        lines.push(`합계: ${formatWon(total)}`);
+      } else {
+        lines.push(`■ 총 금액: ${formatWon(total)}`);
+      }
+      lines.push('', '■ 정산 금액');
+      if (calc.mode === 'equal') {
+        lines.push(`- 정산 인원: ${calc.count}명`);
+        const allSame = calc.shares.every((s) => s.amount === calc.shares[0].amount);
+        if (allSame) lines.push(`- 1인당 금액: ${formatWon(calc.shares[0].amount)}`);
+        else calc.shares.forEach((s) => lines.push(`- ${s.label}: ${formatWon(s.amount)}`));
+      } else {
+        calc.shares.forEach((s) => lines.push(`- ${s.label} (${s.ratioLabel}): ${formatWon(s.amount)}`));
+      }
+      if (account) lines.push('', `■ 입금 안내: ${account}`);
+      document.getElementById('notice-output').value = lines.join('\n');
+    }
+
+    function copyNoticeText() {
+      const text = document.getElementById('notice-output').value;
+      if (!text.trim()) return;
+      navigator.clipboard.writeText(text).then(() => {
+        const el = document.getElementById('split-copy-status');
+        el.textContent = '정산 안내 문구가 클립보드에 복사되었습니다.';
+        setTimeout(() => { el.textContent = ''; }, 3000);
+      });
+    }
+
+    function clearSplitAll() {
+      document.getElementById('event-title').value = '';
+      document.getElementById('account-info').value = '';
+      document.getElementById('direct-total').value = '0';
+      document.getElementById('headcount').value = '1';
+      document.getElementById('item-list').innerHTML = '';
+      document.getElementById('item-list').appendChild(createItemRowElement('', ''));
+      document.getElementById('ratio-list').innerHTML = '';
+      document.getElementById('ratio-list').appendChild(createRatioRowElement('참여자 1', 1));
+      document.getElementById('ratio-list').appendChild(createRatioRowElement('참여자 2', 1));
+      updateSplitAll();
+    }
+
+    /* ===== 2. QR 생성 & 읽기 ===== */
+    function generateQRCode() {
+      const val = document.getElementById('qr-url-input').value.trim();
+      const wrap = document.getElementById('qrcode-canvas-wrap');
+      const hint = document.getElementById('qr-empty-hint');
+      const dlBtn = document.getElementById('qr-download-btn');
+      const cpBtn = document.getElementById('qr-copy-btn');
+      wrap.innerHTML = '';
+      if (!val || typeof QRCode === 'undefined') {
+        hint.style.display = 'block';
+        dlBtn.disabled = true;
+        cpBtn.disabled = true;
+        return;
+      }
+      hint.style.display = 'none';
+      new QRCode(wrap, { text: val, width: 180, height: 180, correctLevel: QRCode.CorrectLevel.H });
+      dlBtn.disabled = false;
+      cpBtn.disabled = false;
+    }
+
+    function downloadQRCode() {
+      const img = document.querySelector('#qrcode-canvas-wrap img');
+      const canvas = document.querySelector('#qrcode-canvas-wrap canvas');
+      const src = img && img.src ? img.src : (canvas ? canvas.toDataURL('image/png') : null);
+      if (!src) return;
+      const a = document.createElement('a');
+      a.href = src;
+      a.download = 'qrcode.png';
+      a.click();
+    }
+
+    async function copyQRCanvas() {
+      const canvas = document.querySelector('#qrcode-canvas-wrap canvas');
+      if (!canvas) return;
+      canvas.toBlob(async (blob) => {
+        try {
+          await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+          document.getElementById('qr-gen-status').textContent = 'QR 이미지가 복사되었습니다.';
+          setTimeout(() => { document.getElementById('qr-gen-status').textContent = ''; }, 2500);
+        } catch (e) {
+          document.getElementById('qr-gen-status').textContent = '복사 권한을 확인해 주세요.';
+        }
+      });
+    }
+
+    const qrDropZone = document.getElementById('qr-drop-zone');
+    qrDropZone.addEventListener('dragover', (e) => { e.preventDefault(); qrDropZone.classList.add('dragover'); });
+    qrDropZone.addEventListener('dragleave', () => qrDropZone.classList.remove('dragover'));
+    qrDropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      qrDropZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length > 0) handleQRImageFile(e.dataTransfer.files[0]);
+    });
+
+    document.addEventListener('paste', (e) => {
+      if (!document.getElementById('panel-qr').classList.contains('active')) return;
+      const items = e.clipboardData && e.clipboardData.items;
+      if (!items) return;
+      for (const item of items) {
+        if (item.type.startsWith('image/')) { handleQRImageFile(item.getAsFile()); break; }
+      }
+    });
+
+    function handleQRImageFile(file) {
+      if (!file || !file.type.startsWith('image/') || typeof jsQR === 'undefined') return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          const prev = document.getElementById('qr-read-preview');
+          prev.src = ev.target.result;
+          prev.style.display = 'inline-block';
+          const canvas = document.getElementById('qr-decode-canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+          const code = jsQR(ctx.getImageData(0, 0, canvas.width, canvas.height).data, canvas.width, canvas.height, { inversionAttempts: 'attemptBoth' });
+          const box = document.getElementById('qr-decoded-box');
+          const txt = document.getElementById('qr-decoded-text');
+          const linkBtn = document.getElementById('qr-open-link');
+          const st = document.getElementById('qr-read-status');
+          if (code && code.data) {
+            txt.textContent = code.data;
+            box.style.display = 'block';
+            st.textContent = '링크/내용을 추출했습니다.';
+            if (/^https?:\/\//i.test(code.data)) { linkBtn.href = code.data; linkBtn.style.display = 'inline-block'; }
+            else linkBtn.style.display = 'none';
+          } else {
+            box.style.display = 'none';
+            st.textContent = 'QR 코드를 찾지 못했습니다.';
+          }
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function copyDecodedQR() {
+      const t = document.getElementById('qr-decoded-text').textContent;
+      navigator.clipboard.writeText(t).then(() => {
+        document.getElementById('qr-read-status').textContent = '추출된 주소를 복사했습니다.';
+      });
+    }
+
+    /* ===== 3. 랜덤 뽑기 & 팀 나누기 ===== */
+    let pickSubMode = 'single';
+    let pickExcluded = new Set();
+    let pickPlainOutput = '';
+
+    function getPickLines() {
+      return document.getElementById('pick-items-input').value.split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+    }
+
+    function updatePickBadge() {
+      document.getElementById('pick-count-badge').textContent = `${getPickLines().length}개`;
+    }
+
+    function setPickSubMode(mode) {
+      pickSubMode = mode;
+      document.getElementById('pick-mode-single-btn').classList.toggle('active', mode === 'single');
+      document.getElementById('pick-mode-team-btn').classList.toggle('active', mode === 'team');
+      document.getElementById('pick-single-controls').style.display = mode === 'single' ? 'block' : 'none';
+      document.getElementById('pick-team-controls').style.display = mode === 'team' ? 'block' : 'none';
+      document.getElementById('pick-result-title').textContent = mode === 'single' ? '뽑기 결과' : '팀 나누기 결과';
+    }
+
+    function shuffle(arr) {
       const copy = [...arr];
       for (let i = copy.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -528,158 +1090,79 @@
       return copy;
     }
 
-    function resetPickedPool() {
-      excludedSet.clear();
-      syncRemainBadge();
-      showCopyStatus('중복 제외 기록이 초기화되었습니다.');
+    function resetPickHistory() {
+      pickExcluded.clear();
+      document.getElementById('pick-copy-status').textContent = '중복 제외 기록을 초기화했습니다.';
     }
 
-    function runAction() {
-      const lines = getLines();
-      const panel = document.getElementById('result-panel');
+    function fillPickSample() {
+      document.getElementById('pick-items-input').value = ['김하준', '이서윤', '박도윤', '최지안', '정시우', '강하윤', '조은우', '윤아린'].join('\n');
+      pickExcluded.clear();
+      updatePickBadge();
+    }
 
+    function clearPickList() {
+      document.getElementById('pick-items-input').value = '';
+      pickExcluded.clear();
+      updatePickBadge();
+    }
+
+    function executePickOrTeam() {
+      const lines = getPickLines();
+      const area = document.getElementById('pick-result-area');
+      const badge = document.getElementById('pick-status-badge');
       if (lines.length === 0) {
-        panel.innerHTML = '<div class="empty-msg">뽑거나 나눌 항목을 한 줄 이상 입력해 주세요.</div>';
-        lastPlainText = '';
+        area.innerHTML = '<p class="hint" style="text-align: center; padding-top: 60px;">목록을 한 줄 이상 입력해 주세요.</p>';
+        pickPlainOutput = '';
         return;
       }
 
-      if (currentMode === 'pick') {
-        executePick(lines, panel);
+      if (pickSubMode === 'single') {
+        const count = Math.max(1, Math.floor(Number(document.getElementById('pick-draw-count').value) || 1));
+        const dupExclude = document.getElementById('pick-exclude-dup').checked;
+        const pool = dupExclude ? lines.filter((x) => !pickExcluded.has(x)) : [...lines];
+        if (pool.length === 0) {
+          area.innerHTML = '<p class="hint" style="text-align: center; padding-top: 60px;">남은 후보가 없습니다. [제외 초기화]를 눌러 주세요.</p>';
+          pickPlainOutput = '';
+          return;
+        }
+        const chosen = shuffle(pool).slice(0, Math.min(count, pool.length));
+        if (dupExclude) chosen.forEach((x) => pickExcluded.add(x));
+        badge.textContent = `${chosen.length}명/개 선정`;
+        area.innerHTML = `<div class="pick-list">${chosen.map((n, i) => `<div class="pick-item"><span class="rank-badge">${i + 1}</span><strong style="font-size: 15px;">${escapeHtml(n)}</strong></div>`).join('')}</div>`;
+        pickPlainOutput = ['[랜덤 뽑기 결과]', ...chosen.map((n, i) => `${i + 1}. ${n}`)].join('\n');
       } else {
-        executeTeamSplit(lines, panel);
+        const teamCount = Math.max(2, Math.floor(Number(document.getElementById('pick-team-num').value) || 2));
+        const actual = Math.min(teamCount, lines.length);
+        const teams = Array.from({ length: actual }, () => []);
+        shuffle(lines).forEach((item, idx) => teams[idx % actual].push(item));
+        badge.textContent = `${actual}개 팀`;
+        area.innerHTML = `<div class="teams-grid">${teams.map((m, i) => `<div class="team-card"><div class="team-header"><span>${i + 1}팀</span><span>${m.length}명</span></div><ul class="team-members">${m.map((x) => `<li>· ${escapeHtml(x)}</li>`).join('')}</ul></div>`).join('')}</div>`;
+        pickPlainOutput = ['[팀 나누기 결과]', ...teams.map((m, i) => `${i + 1}팀 (${m.length}명): ${m.join(', ')}`)].join('\n');
       }
-
-      syncRemainBadge(lines);
     }
 
-    function executePick(lines, panel) {
-      const pickCount = Math.max(1, Math.floor(Number(document.getElementById('pick-count').value) || 1));
-      const exclude = document.getElementById('exclude-picked').checked;
-
-      let pool = exclude ? lines.filter((item) => !excludedSet.has(item)) : [...lines];
-
-      if (pool.length === 0) {
-        panel.innerHTML = '<div class="empty-msg">남은 후보가 없습니다. [제외 기록 초기화]를 눌러 다시 시작해 주세요.</div>';
-        lastPlainText = '';
-        return;
-      }
-
-      const shuffled = shuffleArray(pool);
-      const selected = shuffled.slice(0, Math.min(pickCount, shuffled.length));
-
-      if (exclude) {
-        selected.forEach((item) => excludedSet.add(item));
-      }
-
-      panel.innerHTML = `
-        <div class="pick-list">
-          ${selected
-            .map(
-              (name, idx) => `
-              <div class="pick-item">
-                <span class="rank-badge">${idx + 1}</span>
-                <span class="pick-name">${escapeHtml(name)}</span>
-              </div>
-            `
-            )
-            .join('')}
-        </div>
-        <div class="history-box">
-          ${exclude ? `누적 제외 항목 (${excludedSet.size}개): ${escapeHtml(Array.from(excludedSet).join(', '))}` : '중복 허용 추첨 모드'}
-        </div>
-      `;
-
-      lastPlainText = [
-        '[랜덤 뽑기 결과]',
-        ...selected.map((name, idx) => `${idx + 1}. ${name}`)
-      ].join('\n');
-    }
-
-    function executeTeamSplit(lines, panel) {
-      const teamCount = Math.max(2, Math.floor(Number(document.getElementById('team-count').value) || 2));
-      const actualTeams = Math.min(teamCount, lines.length);
-      const shuffled = shuffleArray(lines);
-
-      const teams = Array.from({ length: actualTeams }, () => []);
-      shuffled.forEach((item, idx) => {
-        teams[idx % actualTeams].push(item);
-      });
-
-      panel.innerHTML = `
-        <div class="teams-grid">
-          ${teams
-            .map(
-              (members, idx) => `
-              <div class="team-card">
-                <div class="team-header">
-                  <span>${idx + 1}팀</span>
-                  <span>${members.length}명</span>
-                </div>
-                <ul class="team-members">
-                  ${members.map((m) => `<li>· ${escapeHtml(m)}</li>`).join('')}
-                </ul>
-              </div>
-            `
-            )
-            .join('')}
-        </div>
-      `;
-
-      const textLines = ['[팀 나누기 결과]'];
-      teams.forEach((members, idx) => {
-        textLines.push(`${idx + 1}팀 (${members.length}명): ${members.join(', ')}`);
-      });
-      lastPlainText = textLines.join('\n');
-    }
-
-    function copyResult() {
-      if (!lastPlainText.trim()) {
-        showCopyStatus('복사할 결과가 없습니다. 먼저 뽑기 또는 팀 나누기를 실행해 주세요.');
-        return;
-      }
-      navigator.clipboard.writeText(lastPlainText).then(() => {
-        showCopyStatus('결과가 클립보드에 복사되었습니다.');
+    function copyPickResult() {
+      if (!pickPlainOutput.trim()) return;
+      navigator.clipboard.writeText(pickPlainOutput).then(() => {
+        document.getElementById('pick-copy-status').textContent = '결과가 클립보드에 복사되었습니다.';
+        setTimeout(() => { document.getElementById('pick-copy-status').textContent = ''; }, 2500);
       });
     }
 
-    function clearResult() {
-      lastPlainText = '';
-      document.getElementById('result-panel').innerHTML =
-        '<div class="empty-msg">왼쪽에 목록을 입력하고 실행 버튼을 눌러 주세요.</div>';
-      showCopyStatus('결과를 지웠습니다.');
-    }
+    (function initAll() {
+      renderBoard();
+      const itemList = document.getElementById('item-list');
+      initialItems.forEach((it) => itemList.appendChild(createItemRowElement(it.name, it.amount)));
+      const ratioList = document.getElementById('ratio-list');
+      initialRatios.forEach((r) => ratioList.appendChild(createRatioRowElement(r.name, r.ratio)));
+      updateSplitAll();
 
-    function clearList() {
-      document.getElementById('items-textarea').value = '';
-      excludedSet.clear();
-      updateItemCount();
-    }
+      document.getElementById('qr-url-input').value = 'https://kimsungtea27-maker.github.io/map/';
+      generateQRCode();
 
-    function loadSampleList() {
-      document.getElementById('items-textarea').value = sampleNames.join('\n');
-      excludedSet.clear();
-      updateItemCount();
-    }
-
-    function showCopyStatus(msg) {
-      const el = document.getElementById('copy-status');
-      el.textContent = msg;
-      setTimeout(() => {
-        el.textContent = '';
-      }, 2800);
-    }
-
-    function escapeHtml(str) {
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-    }
-
-    (function init() {
-      loadSampleList();
-      runAction();
+      fillPickSample();
+      executePickOrTeam();
     })();
   </script>
 </body>
