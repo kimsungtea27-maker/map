@@ -22,11 +22,7 @@
       --radius: 16px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -38,12 +34,7 @@
       flex-direction: column;
     }
 
-    .wrap {
-      max-width: 960px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
+    .wrap { max-width: 960px; width: 100%; margin: 0 auto; padding: 0 20px; }
 
     header {
       background: var(--surface);
@@ -59,10 +50,7 @@
       margin-bottom: 18px;
     }
 
-    .brand-info {
-      flex: 1;
-      min-width: 0;
-    }
+    .brand-info { flex: 1; min-width: 0; }
 
     .tag {
       display: inline-block;
@@ -75,26 +63,10 @@
       margin-bottom: 8px;
     }
 
-    h1 {
-      font-size: 26px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      margin-bottom: 4px;
-    }
+    h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
+    .subtitle { font-size: 14px; color: var(--muted); }
 
-    .subtitle {
-      font-size: 14px;
-      color: var(--muted);
-    }
-
-    /* 헤더 네모 아바타 이모지 */
-    .avatar-box {
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-    }
+    .avatar-box { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
 
     .avatar-square {
       width: 68px;
@@ -109,24 +81,9 @@
       box-shadow: 0 4px 12px -4px rgba(15, 23, 42, 0.14);
     }
 
-    .avatar-square img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .avatar-fallback {
-      font-size: 32px;
-      line-height: 1;
-      display: none;
-    }
-
-    .avatar-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--muted);
-    }
+    .avatar-square img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .avatar-fallback { font-size: 32px; line-height: 1; display: none; }
+    .avatar-label { font-size: 11px; font-weight: 700; color: var(--muted); }
 
     .search-input {
       width: 100%;
@@ -137,22 +94,12 @@
       border: 1.5px solid var(--line);
       border-radius: 12px;
       outline: none;
-      transition: border-color 0.2s, background 0.2s;
     }
 
-    .search-input:focus {
-      background: var(--surface);
-      border-color: var(--primary);
-    }
+    .search-input:focus { background: var(--surface); border-color: var(--primary); }
 
-    main {
-      flex: 1;
-      padding: 28px 0 48px;
-    }
-
-    .section-block {
-      margin-bottom: 36px;
-    }
+    main { flex: 1; padding: 28px 0 48px; }
+    .section-block { margin-bottom: 36px; }
 
     .board-meta {
       display: flex;
@@ -189,36 +136,10 @@
       box-shadow: 0 10px 24px -12px rgba(15, 23, 42, 0.16);
     }
 
-    .card-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .category-badge {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--ink);
-      background: var(--badge-bg);
-      padding: 4px 10px;
-      border-radius: 8px;
-    }
-
-    .post-no {
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 600;
-    }
-
-    .card-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      letter-spacing: -0.3px;
-    }
-
+    .card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+    .category-badge { font-size: 12px; font-weight: 700; color: var(--ink); background: var(--badge-bg); padding: 4px 10px; border-radius: 8px; }
+    .post-no { font-size: 12px; color: var(--muted); font-weight: 600; }
+    .card-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
     .card-desc {
       font-size: 14px;
       color: var(--muted);
@@ -251,19 +172,8 @@
       font-size: 14px;
     }
 
-    /* 간단 정산 계산기 영역 */
-    .calc-layout {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 20px;
-      align-items: start;
-    }
-
-    @media (max-width: 820px) {
-      .calc-layout {
-        grid-template-columns: 1fr;
-      }
-    }
+    .calc-layout { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 20px; align-items: start; }
+    @media (max-width: 820px) { .calc-layout { grid-template-columns: 1fr; } }
 
     .card {
       background: var(--surface);
@@ -274,58 +184,15 @@
       margin-bottom: 16px;
     }
 
-    .card-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
+    .card-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .mode-switch { display: flex; background: var(--surface-alt); padding: 4px; border-radius: 10px; margin-bottom: 14px; }
+    .mode-btn { flex: 1; padding: 8px 10px; border: none; background: transparent; border-radius: 8px; font-family: inherit; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; }
+    .mode-btn.active { background: var(--surface); color: var(--primary); box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06); }
 
-    .mode-switch {
-      display: flex;
-      background: var(--surface-alt);
-      padding: 4px;
-      border-radius: 10px;
-      margin-bottom: 14px;
-    }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
 
-    .mode-btn {
-      flex: 1;
-      padding: 8px 10px;
-      border: none;
-      background: transparent;
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--muted);
-      cursor: pointer;
-    }
-
-    .mode-btn.active {
-      background: var(--surface);
-      color: var(--primary);
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
-    }
-
-    .field {
-      margin-bottom: 12px;
-    }
-
-    .field label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    select,
-    textarea {
+    input[type="text"], input[type="number"], select, textarea {
       width: 100%;
       padding: 10px 12px;
       font-size: 14px;
@@ -337,38 +204,11 @@
       outline: none;
     }
 
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: var(--primary);
-    }
-
-    .row-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .item-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .item-row {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr auto;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .ratio-row {
-      display: grid;
-      grid-template-columns: 1.3fr 0.8fr auto;
-      gap: 8px;
-      align-items: center;
-    }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .item-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+    .item-row { display: grid; grid-template-columns: 1.4fr 1fr auto; gap: 8px; align-items: center; }
+    .ratio-row { display: grid; grid-template-columns: 1.3fr 0.8fr auto; gap: 8px; align-items: center; }
 
     .btn {
       display: inline-flex;
@@ -385,51 +225,13 @@
       text-decoration: none;
     }
 
-    .btn-primary {
-      background: var(--primary);
-      color: #ffffff;
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-hover);
-    }
-
-    .btn-secondary {
-      background: var(--surface-alt);
-      color: var(--ink);
-    }
-
-    .btn-outline {
-      background: var(--surface);
-      color: var(--ink);
-      border: 1.5px solid var(--line);
-    }
-
-    .btn-sm {
-      padding: 7px 10px;
-      font-size: 12px;
-      border-radius: 8px;
-    }
-
-    .btn-icon {
-      width: 36px;
-      height: 38px;
-      padding: 0;
-      background: #fef2f2;
-      color: var(--danger);
-      border: none;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
-    }
+    .btn-primary { background: var(--primary); color: #ffffff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: var(--surface-alt); color: var(--ink); }
+    .btn-outline { background: var(--surface); color: var(--ink); border: 1.5px solid var(--line); }
+    .btn-sm { padding: 7px 10px; font-size: 12px; border-radius: 8px; }
+    .btn-icon { width: 36px; height: 38px; padding: 0; background: #fef2f2; color: var(--danger); border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 
     .summary-strip {
       display: flex;
@@ -442,42 +244,13 @@
       margin-top: 12px;
     }
 
-    .summary-strip .label {
-      font-size: 13px;
-      font-weight: 700;
-      color: #1e40af;
-    }
+    .summary-strip .label { font-size: 13px; font-weight: 700; color: #1e40af; }
+    .summary-strip .amount { font-size: 19px; font-weight: 800; color: var(--primary); }
 
-    .summary-strip .amount {
-      font-size: 19px;
-      font-weight: 800;
-      color: var(--primary);
-    }
-
-    .result-box {
-      background: var(--surface-alt);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 12px;
-    }
-
-    .result-main-amount {
-      font-size: 23px;
-      font-weight: 800;
-      margin-bottom: 4px;
-    }
-
-    .result-sub {
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .member-results {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 10px;
-    }
+    .result-box { background: var(--surface-alt); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+    .result-main-amount { font-size: 23px; font-weight: 800; margin-bottom: 4px; }
+    .result-sub { font-size: 13px; color: var(--muted); }
+    .member-results { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
 
     .member-item {
       display: flex;
@@ -490,58 +263,16 @@
       font-size: 14px;
     }
 
-    .member-item .name {
-      font-weight: 700;
-    }
+    .member-item .name { font-weight: 700; }
+    .member-item .meta { font-size: 12px; color: var(--muted); margin-left: 6px; }
+    .member-item .val { font-weight: 800; color: var(--primary); }
 
-    .member-item .meta {
-      font-size: 12px;
-      color: var(--muted);
-      margin-left: 6px;
-    }
+    textarea.notice-area { min-height: 210px; resize: vertical; line-height: 1.6; font-size: 13.5px; background: #fcfcfd; }
+    .copy-feedback { font-size: 13px; font-weight: 700; color: var(--success); min-height: 18px; margin-top: 8px; }
+    .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
 
-    .member-item .val {
-      font-weight: 800;
-      color: var(--primary);
-    }
-
-    textarea.notice-area {
-      min-height: 210px;
-      resize: vertical;
-      line-height: 1.6;
-      font-size: 13.5px;
-      background: #fcfcfd;
-    }
-
-    .copy-feedback {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--success);
-      min-height: 18px;
-      margin-top: 8px;
-    }
-
-    .hint {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 6px;
-    }
-
-    footer {
-      background: var(--surface);
-      border-top: 1px solid var(--line);
-      padding: 20px 0;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .footer-inner {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
+    footer { background: var(--surface); border-top: 1px solid var(--line); padding: 20px 0; font-size: 13px; color: var(--muted); }
+    .footer-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
   </style>
 </head>
 <body>
@@ -554,7 +285,6 @@
           <p class="subtitle">만든 웹앱과 도구를 한곳에 모아둔 대문 페이지입니다.</p>
         </div>
 
-        <!-- 헤더 네모 아바타 이모지 -->
         <div class="avatar-box">
           <div class="avatar-square" title="사용자 아바타 이모지">
             <img id="header-avatar-img" src="./16defad8-5298-41a8-bae5-a18224f12069.png" alt="사용자 아바타 이모지" />
@@ -576,7 +306,6 @@
 
   <main>
     <div class="wrap">
-      <!-- 게시판 앱 목록 -->
       <section class="section-block">
         <div class="board-meta">
           <span>등록된 앱 목록</span>
@@ -586,7 +315,6 @@
         <div id="empty-state" class="empty-state">검색 조건에 맞는 앱이 없습니다.</div>
       </section>
 
-      <!-- 간단 정산 계산기 -->
       <section class="section-block" id="settlement-calc">
         <div class="board-meta">
           <span>간단 정산 · 견적 계산기</span>
@@ -715,16 +443,15 @@
   </footer>
 
   <script>
-    // 헤더 네모 아바타 이미지 파일명 (저장소 루트 PNG 파일명 지정)
     const AVATAR_IMAGE = './16defad8-5298-41a8-bae5-a18224f12069.png';
 
     const APPS = [
       {
         category: '정산 · 견적',
         title: '간단 정산 · 견적 계산기',
-        description: '항목별 비용 또는 총액을 입력하고 인원·비율별 정산 금액과 안내 문구를 자동 생성합니다.',
-        url: './분할/',
-        date: '최신 등록'
+        description: '아래 정산 계산기 섹션으로 바로 이동해 항목별 비용·인원·비율을 계산합니다.',
+        url: '#settlement-calc',
+        date: '바로 계산'
       },
       {
         category: '유틸리티',
@@ -838,10 +565,7 @@
     }
 
     function escapeHtml(str) {
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
     function createItemRowElement(name = '', amount = '') {
@@ -944,16 +668,11 @@
 
       if (splitMode === 'equal') {
         const count = Math.max(1, Math.floor(Number(document.getElementById('headcount').value) || 1));
-        const rawShare = total / count;
-        const baseShare = roundByMode(rawShare, roundMode);
+        const baseShare = roundByMode(total / count, roundMode);
 
         const shares = [];
         for (let i = 0; i < count; i++) {
-          shares.push({
-            label: `${i + 1}번 인원`,
-            ratioLabel: `1/${count}`,
-            amount: baseShare
-          });
+          shares.push({ label: `${i + 1}번 인원`, ratioLabel: `1/${count}`, amount: baseShare });
         }
 
         if (adjustFirst && shares.length > 0 && total > 0) {
@@ -979,22 +698,14 @@
             mode: 'ratio',
             count: entries.length,
             baseShare: 0,
-            shares: entries.map((e) => ({
-              label: e.name,
-              ratioLabel: `비율 ${e.ratio}`,
-              amount: 0
-            }))
+            shares: entries.map((e) => ({ label: e.name, ratioLabel: `비율 ${e.ratio}`, amount: 0 }))
           };
         }
 
         const shares = entries.map((e) => {
           const exact = (total * e.ratio) / ratioSum;
           const pct = ((e.ratio / ratioSum) * 100).toFixed(1).replace(/\.0$/, '');
-          return {
-            label: e.name,
-            ratioLabel: `${e.ratio} (${pct}%)`,
-            amount: roundByMode(exact, roundMode)
-          };
+          return { label: e.name, ratioLabel: `${e.ratio} (${pct}%)`, amount: roundByMode(exact, roundMode) };
         });
 
         if (adjustFirst && shares.length > 0 && total > 0) {
@@ -1002,12 +713,7 @@
           shares[0].amount = Math.max(0, total - sumOthers);
         }
 
-        return {
-          mode: 'ratio',
-          count: entries.length,
-          baseShare: shares[0] ? shares[0].amount : 0,
-          shares
-        };
+        return { mode: 'ratio', count: entries.length, baseShare: shares[0] ? shares[0].amount : 0, shares };
       }
     }
 
@@ -1084,9 +790,7 @@
       navigator.clipboard.writeText(text).then(() => {
         const statusEl = document.getElementById('copy-status');
         statusEl.textContent = '정산 안내 문구가 클립보드에 복사되었습니다.';
-        setTimeout(() => {
-          statusEl.textContent = '';
-        }, 3000);
+        setTimeout(() => { statusEl.textContent = ''; }, 3000);
       });
     }
 
