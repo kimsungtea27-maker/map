@@ -43,16 +43,20 @@
     header {
       background: var(--surface);
       border-bottom: 1px solid var(--line);
-      padding: 36px 0 28px;
+      padding: 32px 0 26px;
     }
 
     .header-top {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
       margin-bottom: 20px;
+    }
+
+    .brand-info {
+      flex: 1;
+      min-width: 0;
     }
 
     .tag {
@@ -75,6 +79,47 @@
 
     .subtitle {
       font-size: 15px;
+      color: var(--muted);
+    }
+
+    /* 헤더 네모 아바타 이모지 박스 */
+    .avatar-box {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .avatar-square {
+      width: 68px;
+      height: 68px;
+      border-radius: 14px;
+      border: 2px solid var(--line);
+      background: var(--primary-soft);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px -4px rgba(15, 23, 42, 0.14);
+    }
+
+    .avatar-square img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .avatar-fallback {
+      font-size: 32px;
+      line-height: 1;
+      display: none;
+    }
+
+    .avatar-label {
+      font-size: 11px;
+      font-weight: 700;
       color: var(--muted);
     }
 
@@ -222,12 +267,22 @@
   <header>
     <div class="wrap">
       <div class="header-top">
-        <div>
+        <div class="brand-info">
           <span class="tag">WEB APP BOARD</span>
           <h1>내 웹앱 게시판</h1>
           <p class="subtitle">만든 웹앱과 도구를 한곳에 모아둔 대문 페이지입니다.</p>
         </div>
+
+        <!-- 헤더 네모 아바타 이모지 -->
+        <div class="avatar-box">
+          <div class="avatar-square" title="사용자 아바타 이모지">
+            <img id="header-avatar-img" src="./16defad8-5298-41a8-bae5-a18224f12069.png" alt="사용자 아바타 이모지" />
+            <span id="header-avatar-fallback" class="avatar-fallback">🙂</span>
+          </div>
+          <span class="avatar-label">MY AVATAR</span>
+        </div>
       </div>
+
       <div class="search-box">
         <input
           type="search"
@@ -260,23 +315,36 @@
   </footer>
 
   <script>
-    // 이곳에 앱 정보를 추가하면 게시판 카드가 자동으로 생성됩니다.
+    // 저장소에 업로드한 아바타 이미지 파일명으로 변경해서 사용할 수 있습니다.
+    // 예: './844a5209-3b90-41ac-95ab-2af7c7a9067e.png'
+    const AVATAR_IMAGE = './16defad8-5298-41a8-bae5-a18224f12069.png';
+
     const APPS = [
+      {
+        category: '정산 · 견적',
+        title: '간단 정산 · 견적 계산기',
+        description: '항목별 비용 또는 총액을 입력하고 인원·비율별 정산 금액과 안내 문구를 자동 생성합니다.',
+        url: './split/',
+        date: '최신 등록'
+      },
       {
         category: '유틸리티',
         title: 'QR 코드 생성기 & 리더기',
         description: '링크 입력 시 QR 코드를 즉시 생성하고, 이미지를 업로드해 링크를 추출하는 웹앱입니다.',
         url: './QR/',
-        date: '최신 등록'
-      },
-      {
-        category: '샘플 · 예정',
-        title: '다음 웹앱 (타이머 / 뽑기 등)',
-        description: '추가로 만들 웹앱 폴더나 파일 경로를 url 항목에 연결해 게시판에 올릴 수 있습니다.',
-        url: './gemini-code-1795744020769.html',
-        date: '예시 항목'
+        date: '등록됨'
       }
     ];
+
+    (function initAvatar() {
+      const img = document.getElementById('header-avatar-img');
+      const fallback = document.getElementById('header-avatar-fallback');
+      img.src = AVATAR_IMAGE;
+      img.onerror = () => {
+        img.style.display = 'none';
+        fallback.style.display = 'inline';
+      };
+    })();
 
     function renderBoard() {
       const keyword = document.getElementById('search-input').value.trim().toLowerCase();
@@ -324,4 +392,4 @@
     renderBoard();
   </script>
 </body>
-</html>ㅑㅜ
+</html>
